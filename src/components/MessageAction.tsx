@@ -4,6 +4,7 @@ export default function MessageAction(props: {
   edit: () => void
   del: () => void
   copy: () => void
+  player: () => void
 }) {
   const [copied, setCopied] = createSignal(false)
   return (
@@ -19,6 +20,7 @@ export default function MessageAction(props: {
           icon={copied() ? "i-un:copied" : "i-un:copy"}
         />
         <ActionItem label="编辑" onClick={props.edit} icon={"i-carbon:edit"} />
+        <ActionItem label="播放" onClick={props.player} icon={"i-carbon:play-filled"} />
         <ActionItem
           label="删除"
           onClick={props.del}
