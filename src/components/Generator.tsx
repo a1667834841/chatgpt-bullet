@@ -227,6 +227,27 @@ export default function (props: {
   }
 
   async function fetchGPT(inputValue: string) {
+
+     // 检查ip
+     let ip =  getIp()
+     if (isValidIP(ip)) {
+       let date = getNowDate();
+       if(localStorage.getItem(date) == null) {
+         localStorage.setItem(date,"0")
+       } else {
+         localStorage.setItem(date, String( Number(localStorage.getItem(date)) + 1))
+       }
+ 
+       if( Number(localStorage.getItem(date)) > 10) {
+         throw new Error("今前已超额，请过一小时再试")
+       }
+ 
+       
+     } else {
+       throw new Error("Not for cell phone")
+     }
+
+
     setLoading(true)
     const controller = new AbortController()
     setController(controller)
@@ -481,4 +502,56 @@ export default function (props: {
       </div>
     </div>
   )
+}
+
+
+// 获取ip
+function getIp(): string {
+
+  let ip = localStorage.getItem("ip") == null ? "" : localStorage.getItem("ip");
+  if (ip != null && ip != 'null' && ip != "") {
+    return ip;
+  }
+
+  fetch('https://api.ipify.org/?format=json',{
+      method: 'GET'
+  })
+.then(response => {
+   // 检查响应状态码
+   if (response.ok) {
+      // 返回响应结果的 JSON 格式
+      return response.json();
+    } else {
+      console.log("https://api.ipify.org/?format=json Network response was not ok.");
+    }
+}).then(data => {
+  ip = data.ip;
+  localStorage.setItem("ip", ip == null ? "" : ip)
+})
+
+  return ip == null ? "" : ip
+
+}
+
+function isValidIP(ip:any) {
+  var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+  return reg.test(ip);
+} 
+
+
+function getNowDate(): string {
+  const date = new Date();
+  let month: string | number = date.getMonth() + 1;
+  let strDate: string | number = date.getDate();
+ 
+  if (month <= 9) {
+    month = "0" + month;
+  }
+ 
+  if (strDate <= 9) {
+    strDate = "0" + strDate;
+  }
+ 
+  return date.getFullYear() + "-" + month + "-" + strDate + " "
+  + date.getHours();
 }
