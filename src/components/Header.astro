@@ -3,22 +3,34 @@ import Logo from "./Logo.astro"
 import ThemeToggle from "./ThemeToggle.astro"
 ---
 
-<header class="sticky top--100px z-99">
+<header class="sticky top--100px">
   <div class="flex justify-between items-start">
-    <span class="w-100px h-100px logo">
+    <!-- <span class="w-100px h-100px logo">
       <Logo />
-    </span>
+    </span> -->
     <ThemeToggle />
   </div>
+
   <div
-    class="flex items-center mt-4 pb-4 text-2xl title cursor-pointer"
+    class="flex-initial items-center mt-4 pb-4 text-2xl title cursor-pointer"
     onclick="scrollToTop()"
   >
-    <span
+    <!-- <span
       class="text-transparent font-extrabold bg-clip-text bg-gradient-to-r dark:from-yellow-300 from-yellow-600 dark:to-red-700 to-red-700 mr-1"
       >ChatGPT</span
     >
-    <span class="ml-1 font-extrabold text-slate-7 dark:text-slate">Vercel</span>
+    <span class="ml-1 font-extrabold text-slate-7 dark:text-slate">Vercel</span> -->
+
+  
+  <div class="flex items-center mt-2">
+    <span class="text-2xl text-slate font-extrabold mr-1">ChatGPT</span>
+  </div>
+  <div class="float-right  mt-1">
+    <span class="text-2xl text-slate font-extrabold mr-1">加微信发群链接</span>
+   <img items-center style="width: 150px;" src="https://img.ggball.top/picGo/个人微信.png">
+  </div>
+
+
   </div>
 </header>
 

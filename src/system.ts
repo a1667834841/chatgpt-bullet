@@ -4,15 +4,24 @@ export const setting = {
   openaiAPIKey: "",
   openaiAPITemperature: 60,
   password: "",
-  systemRule: ""
+  systemRule: "",
+  bullet: true
 }
 
-export const message = `- 由 [OpenAI API (gpt-3.5-turbo)](https://platform.openai.com/docs/guides/chat) 和 [Vercel](http://vercel.com/) 提供支持。
-- 由 [@ourongxing](https://github.com/ourongxing) 基于 [chatgpt-demo](https://github.com/ddiu8081/chatgpt-demo) 开发，查看 [源码](https://github.com/ourongxing/chatgpt-vercel)，欢迎自部署。
-- 该网站仅作为演示，不提供长期服务，网站密码为 \`ourongxing\`，请勿滥用。
-- 如果本项目对你有所帮助，可以给小猫 [买点零食](https://cdn.jsdelivr.net/gh/ourongxing/chatgpt-vercel/assets/reward.gif)，但不接受任何付费功能请求。
-- 该预览页面域名由 [@AUDI_GUZZ](https://m.okjike.com/users/4af3cfb4-1291-4a8b-b210-f515c86934a9) 和 [@Airyland](https://m.okjike.com/users/C6C8DE3A-E89D-4978-9E7D-B2E167D835A9) 免费提供，API Key 由 [@AUDI_GUZZ](https://m.okjike.com/users/4af3cfb4-1291-4a8b-b210-f515c86934a9) 和 [@ourongxing](https://github.com/ourongxing) 免费提供，感谢。
+export const message = `
+# 公告
+> 目前网站在使用ChatGPT账号的时候发现免费额度已经快用完啦！
+😱一旦额度耗尽，可能就再也不能继续使用这个网站了，这可怎么办呢？
+😢但是我相信总有解决办法的！
+如果有哪位小仙女/小哥哥手里的ChatGPT账号免费额度也快要过期了，而且又不用api的话，能不能麻烦你们给我续一下天数呢？这个小小的举动对我来说就像一份大礼！
+🎁如果你们有意愿的话，可以加入群来联系我哦！特别感谢大家的支持和帮助！
+
+- **非常感谢所有已提供apikey的用户**
+- 至理名言
+- 德鲁大叔
+- 子非鱼
 - [[Shift]] + [[Enter]] 换行。开头输入 [[/]] 或者 [[空格]] Prompt 预设。[[↑]] 可编辑最近一次提问。点击名称滚动到顶部，点击输入框滚动到底部。`
+
 
 export type Setting = typeof setting
 

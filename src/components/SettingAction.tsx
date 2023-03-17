@@ -16,7 +16,7 @@ export default function SettingAction(props: {
   return (
     <div class="text-sm text-slate-7 dark:text-slate mb-2">
       <Show when={shown()}>
-        <SettingItem icon="i-ri:lock-password-line" label="网站密码">
+        {/* <SettingItem icon="i-ri:lock-password-line" label="网站密码">
           <input
             type="password"
             value={props.setting().password}
@@ -28,7 +28,7 @@ export default function SettingAction(props: {
               })
             }}
           />
-        </SettingItem>
+        </SettingItem> */}
         <SettingItem icon="i-carbon:api" label="OpenAI API Key">
           <input
             type="password"
@@ -42,7 +42,7 @@ export default function SettingAction(props: {
             }}
           />
         </SettingItem>
-        <SettingItem icon="i-carbon:user-online" label="系统角色指令">
+        {/* <SettingItem icon="i-carbon:user-online" label="系统角色指令">
           <input
             type="text"
             value={props.setting().systemRule}
@@ -54,7 +54,7 @@ export default function SettingAction(props: {
               })
             }}
           />
-        </SettingItem>
+        </SettingItem> */}
         <SettingItem icon="i-carbon:data-enrichment" label="思维发散程度">
           <input
             type="range"
@@ -91,7 +91,7 @@ export default function SettingAction(props: {
             <div class="w-9 h-5 bg-slate bg-op-15 peer-focus:outline-none peer-focus:ring-0  rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate"></div>
           </label>
         </SettingItem>
-        <SettingItem
+        {/* <SettingItem
           icon="i-carbon:3d-curve-auto-colon"
           label="开启连续对话，将加倍消耗 Token"
         >
@@ -104,6 +104,25 @@ export default function SettingAction(props: {
                 props.setSetting({
                   ...props.setting(),
                   continuousDialogue: (e.target as HTMLInputElement).checked
+                })
+              }}
+            />
+            <div class="w-9 h-5 bg-slate bg-op-15 peer-focus:outline-none peer-focus:ring-0  rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate"></div>
+          </label>
+        </SettingItem> */}
+        <SettingItem
+          icon="i-carbon:3d-curve-auto-colon"
+          label="是否发送弹幕"
+        >
+          <label class="relative inline-flex items-center cursor-pointer ml-1">
+            <input
+              type="checkbox"
+              checked={props.setting().bullet}
+              class="sr-only peer"
+              onChange={e => {
+                props.setSetting({
+                  ...props.setting(),
+                  bullet: (e.target as HTMLInputElement).checked
                 })
               }}
             />

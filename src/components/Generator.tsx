@@ -9,6 +9,7 @@ import throttle from "just-throttle"
 import { isMobile } from "~/utils"
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
+import  SendAndSaveBullet  from "./Bullet"
 // import { mdMessage } from "~/temp"
 
 export interface PromptItem {
@@ -187,6 +188,11 @@ export default function (props: {
     const inputValue = value ?? inputContent()
     if (!inputValue) {
       return
+    }
+
+    // 发送弹幕
+    if(setting().bullet) {
+      SendAndSaveBullet(inputValue)
     }
     // @ts-ignore
     if (window?.umami) umami.trackEvent("chat_generate")
