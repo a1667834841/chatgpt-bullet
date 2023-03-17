@@ -5,7 +5,7 @@ import "../styles/bullet.css"
 let screen = null
 const tool_url = "https://toolkit.show/tool/"
 // const tool_url = "http://localhost:9500/tool/"
-const interval_time = 1000 * 60
+const interval_time = 1000 * 60 * 5
 onMount(async () => {
     screen = new BulletJs(".bullet_area", {
         trackHeight: 35, // 每条轨道高度

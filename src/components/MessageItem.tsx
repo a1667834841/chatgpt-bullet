@@ -11,7 +11,7 @@ import "../styles/message.css"
 import "../styles/clipboard.css"
 import { useCopyCode } from "../hooks"
 import { copyToClipboard } from "~/utils"
-import exportVoice from "./Voice"
+import {exportVoice,stopVoice} from "./Voice"
 
 interface Props {
   role: ChatMessage["role"]
@@ -49,6 +49,9 @@ export default (props: Props) => {
   }
   function player() {
     exportVoice(props.message)
+  }
+  function stopPlayer() {
+    stopVoice()
   }
 
   function del() {
@@ -94,6 +97,7 @@ export default (props: Props) => {
         edit={edit}
         player={player}
         hidden={props.index === undefined}
+        stopPlayer={stopPlayer}
       />
     </div>
   )

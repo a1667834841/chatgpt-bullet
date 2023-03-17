@@ -5,8 +5,10 @@ export default function MessageAction(props: {
   del: () => void
   copy: () => void
   player: () => void
+  stopPlayer: () => void
 }) {
   const [copied, setCopied] = createSignal(false)
+  const [playered, setPlayer] = createSignal(false)
   return (
     <Show when={!props.hidden}>
       <div class="flex absolute items-center justify-between md:top-2 md:right-2 top--2 right-0 text-sm text-slate-7 dark:text-slate group-hover:opacity-100 group-focus:opacity-100 opacity-0 bg-slate bg-op-10 rounded">
@@ -20,7 +22,18 @@ export default function MessageAction(props: {
           icon={copied() ? "i-un:copied" : "i-un:copy"}
         />
         <ActionItem label="编辑" onClick={props.edit} icon={"i-carbon:edit"} />
-        <ActionItem label="播放" onClick={props.player} icon={"i-carbon:play-filled"} />
+        <ActionItem label="播放" onClick={ () => {
+          
+          if(!playered()) {
+            props.player()
+            setPlayer(true)
+          } else {
+            props.stopPlayer()
+            setPlayer(false)
+          }
+             
+        }} 
+        icon={playered() ? "i-carbon:stop-filled" : "i-carbon:play-filled"} />
         <ActionItem
           label="删除"
           onClick={props.del}
