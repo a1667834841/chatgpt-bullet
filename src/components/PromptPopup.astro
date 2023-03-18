@@ -1,0 +1,49 @@
+
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <span class="close" onclick="closePopup()">&times;</span>
+    <input type="text" placeholder="输入内容">
+    <ul id="list"></ul>
+  </div>
+</div>
+
+
+
+<style is:inline>
+  /* 弹出框外部样式 */
+  .popup {
+    /* display: none; */
+    position: fixed;
+    z-index: 11;
+    left: 0;
+    top: 0;
+    width: 90%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+  }
+
+  /* 弹出框内容样式 */
+  .popup-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 10px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+
+  /* 关闭按钮样式 */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+</style>

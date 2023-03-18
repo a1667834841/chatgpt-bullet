@@ -388,7 +388,7 @@ export default function (props: {
         )}
       </div>
       <div
-        class="pb-2em fixed bottom-0 z-100 op-0"
+        class="pb-2em fixed bottom-0 z-10 op-0"
         style={
           containerWidth() === "init"
             ? {}

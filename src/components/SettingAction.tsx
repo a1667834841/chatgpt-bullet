@@ -3,6 +3,7 @@ import { toJpeg } from "html-to-image"
 import { copyToClipboard, dateFormat } from "~/utils"
 import type { ChatMessage } from "~/types"
 import type { Setting } from "~/system"
+import promptPopup from "./PromptPopup"
 
 export default function SettingAction(props: {
   setting: Accessor<Setting>
@@ -12,6 +13,7 @@ export default function SettingAction(props: {
   messaages: ChatMessage[]
 }) {
   const [shown, setShown] = createSignal(false)
+  const [popup, setPopup] = createSignal(false)
   const [copied, setCopied] = createSignal(false)
   return (
     <div class="text-sm text-slate-7 dark:text-slate mb-2">
@@ -140,6 +142,11 @@ export default function SettingAction(props: {
           label="设置"
         />
         <div class="flex">
+        <ActionItem
+            onClick={showPrompt}
+            icon="i-carbon:image"
+            label="提示集合"
+          />
           <ActionItem
             onClick={exportJpg}
             icon="i-carbon:image"
@@ -210,6 +217,10 @@ function exportJpg() {
       a.click()
     }
   )
+}
+
+function showPrompt() {
+  
 }
 
 async function exportMD(messages: ChatMessage[]) {

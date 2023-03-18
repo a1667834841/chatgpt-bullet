@@ -47,11 +47,30 @@ export default function PromptList(props: {
   })
 
   return (
+    <div id="popup" class="popup"  style={{
+      "position": "fixed",
+      "z-index": 11,
+      "left": 0,
+      "top": "10%",
+      "right": 0,
+      
+      "margin":"0 auto",
+      "width": "90%",
+      "height": "80%",
+      "overflow": "auto",
+      "background-color": "rgba(0,0,0,0.9)"
+    }}>
+      {/* <input type="text" placeholder="输入内容"></input> */}
     <ul
       ref={containerRef!}
-      class="bg-slate bg-op-15 dark:text-slate text-slate-7 overflow-y-auto rounded-t"
+      class="bg-slate bg-op-15 text-white text-3xl font-bold overflow-y-auto rounded-t grid gap-4 grid-cols-2"
       style={{
-        "max-height": maxHeight()
+        "position": "fixed",
+        "top": "10%",
+        // "max-height": maxHeight(),
+        "height": "80%",
+        "width": "90%",
+        "margin": "0 10"
       }}
     >
       <For each={props.prompts}>
@@ -64,6 +83,8 @@ export default function PromptList(props: {
         )}
       </For>
     </ul>
+    </div>
+
   )
 }
 
