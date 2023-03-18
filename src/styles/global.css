@@ -1,6 +1,6 @@
 ::-webkit-scrollbar {
   width: 6px;
-  height: 6px;
+  height: 26px;
   /**/
 }
 
@@ -35,7 +35,7 @@ html.dark {
 }
 
 main {
-  max-width: 100%;
+  max-width: 90%;
   margin: 0 0;
   padding: 2em 2em;
 }
