@@ -77,7 +77,7 @@ export default (props: Props) => {
 
   return (
     <div
-      class="group flex py-2 gap-3 px-5 rounded-lg transition-colors md:hover:bg-slate/5 dark:md:hover:bg-slate/2 relative message-item"
+      class="group flex py-2 gap-3 px-4 rounded-lg transition-colors md:hover:bg-slate/5 dark:md:hover:bg-slate/2 relative message-item"
       classList={{
         temporary: props.index === undefined
       }}

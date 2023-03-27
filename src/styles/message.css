@@ -2,6 +2,7 @@
   background-color: #1c1e29;
   font-size: 0.8rem;
   padding: 0.4rem 1rem;
+  margin: 10px 0;
 }
 
 .dark .message pre {

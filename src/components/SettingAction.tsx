@@ -13,7 +13,6 @@ export default function SettingAction(props: {
   messaages: ChatMessage[]
 }) {
   const [shown, setShown] = createSignal(false)
-  const [popup, setPopup] = createSignal(false)
   const [copied, setCopied] = createSignal(false)
   return (
     <div class="text-sm text-slate-7 dark:text-slate mb-2">
