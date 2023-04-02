@@ -194,8 +194,8 @@ export default function (props: {
     if(setting().bullet) {
       SendAndSaveBullet(inputValue)
     }
-    
-    throw new Error("网站已不可用，请关注公众号【toolkit百宝箱】，获取最新地址")
+    setCurrentAssistantMessage("网站已不可用，请关注公众号【toolkit百宝箱】，获取最新地址")
+    return
 
     // @ts-ignore
     if (window?.umami) umami.trackEvent("chat_generate")
