@@ -9,8 +9,8 @@ export const setting = {
 }
 
 export const message = `
-## 公告
-- 网站已不可用，请关注公众号【toolkit百宝箱】，获取最新地址
+## bullet-chatgpt
+- 一个可以发送弹幕的chatgpt
 `
 
 

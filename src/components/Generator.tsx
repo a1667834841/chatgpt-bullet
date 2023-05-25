@@ -1,172 +1,175 @@
-import { createEffect, createSignal, For, onMount, Show } from "solid-js"
-import { createResizeObserver } from "@solid-primitives/resize-observer"
-import MessageItem from "./MessageItem"
-import type { ChatMessage } from "~/types"
-import SettingAction from "./SettingAction"
-import PromptList from "./PromptList"
-import { Fzf } from "fzf"
-import throttle from "just-throttle"
-import { isMobile } from "~/utils"
-import type { Setting } from "~/system"
-import { makeEventListener } from "@solid-primitives/event-listener"
-import  SendAndSaveBullet  from "./Bullet"
+import { createEffect, createSignal, For, onMount, Show } from "solid-js";
+import { createResizeObserver } from "@solid-primitives/resize-observer";
+import MessageItem from "./MessageItem";
+import type { ChatMessage } from "~/types";
+import SettingAction from "./SettingAction";
+import PromptList from "./PromptList";
+import { Fzf } from "fzf";
+import throttle from "just-throttle";
+import { isMobile } from "~/utils";
+import type { Setting } from "~/system";
+import { makeEventListener } from "@solid-primitives/event-listener";
+import SendAndSaveBullet from "./Bullet";
 // import { mdMessage } from "~/temp"
 
 export interface PromptItem {
-  desc: string
-  prompt: string
+  desc: string;
+  prompt: string;
 }
 
 export default function (props: {
-  prompts: PromptItem[]
+  prompts: PromptItem[];
   env: {
-    defaultSetting: Setting
-    defaultMessage: string
-    resetContinuousDialogue: boolean
-  }
+    defaultSetting: Setting;
+    defaultMessage: string;
+    resetContinuousDialogue: boolean;
+  };
 }) {
-  let inputRef: HTMLTextAreaElement
-  let containerRef: HTMLDivElement
+  let inputRef: HTMLTextAreaElement;
+  let containerRef: HTMLDivElement;
 
-  const { defaultMessage, defaultSetting, resetContinuousDialogue } = props.env
+  const { defaultMessage, defaultSetting, resetContinuousDialogue } = props.env;
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([
     // {
     //   role: "assistant",
     //   content: mdMessage
     // }
-  ])
-  const [inputContent, setInputContent] = createSignal("")
-  const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
-  const [loading, setLoading] = createSignal(false)
-  const [controller, setController] = createSignal<AbortController>()
-  const [setting, setSetting] = createSignal(defaultSetting)
-  const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
-  const [containerWidth, setContainerWidth] = createSignal("init")
+  ]);
+  const [inputContent, setInputContent] = createSignal("");
+  const [currentAssistantMessage, setCurrentAssistantMessage] =
+    createSignal("");
+  const [loading, setLoading] = createSignal(false);
+  const [controller, setController] = createSignal<AbortController>();
+  const [setting, setSetting] = createSignal(defaultSetting);
+  const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>(
+    []
+  );
+  const [containerWidth, setContainerWidth] = createSignal("init");
   const fzf = new Fzf(props.prompts, {
-    selector: k => `${k.desc} (${k.prompt})`
-  })
-  const [height, setHeight] = createSignal("48px")
-  const [compositionend, setCompositionend] = createSignal(true)
+    selector: (k) => `${k.desc} (${k.prompt})`,
+  });
+  const [height, setHeight] = createSignal("48px");
+  const [compositionend, setCompositionend] = createSignal(true);
 
   const scrollToBottom = throttle(
     () => {
       window.scrollTo({
         top: document.body.scrollHeight,
-        behavior: "smooth"
-      })
+        behavior: "smooth",
+      });
     },
     250,
     { leading: true, trailing: false }
-  )
+  );
 
   onMount(() => {
     makeEventListener(
       inputRef,
       "compositionend",
       () => {
-        setCompositionend(true)
-        handleInput()
+        setCompositionend(true);
+        handleInput();
       },
       { passive: true }
-    )
+    );
     makeEventListener(
       inputRef,
       "compositionstart",
       () => {
-        setCompositionend(false)
+        setCompositionend(false);
       },
       { passive: true }
-    )
-    document.querySelector("main")?.classList.remove("before")
-    document.querySelector("main")?.classList.add("after")
+    );
+    document.querySelector("main")?.classList.remove("before");
+    document.querySelector("main")?.classList.add("after");
     createResizeObserver(containerRef, ({ width, height }, el) => {
-      if (el === containerRef) setContainerWidth(`${width}px`)
-    })
-    const storage = localStorage.getItem("setting")
-    const session = localStorage.getItem("session")
+      if (el === containerRef) setContainerWidth(`${width}px`);
+    });
+    const storage = localStorage.getItem("setting");
+    const session = localStorage.getItem("session");
     try {
-      let archiveSession = false
+      let archiveSession = false;
       if (storage) {
-        const parsed = JSON.parse(storage)
-        archiveSession = parsed.archiveSession
+        const parsed = JSON.parse(storage);
+        archiveSession = parsed.archiveSession;
         setSetting({
           ...defaultSetting,
           ...parsed,
-          ...(resetContinuousDialogue ? { continuousDialogue: false } : {})
-        })
+          ...(resetContinuousDialogue ? { continuousDialogue: false } : {}),
+        });
       }
       if (session && archiveSession) {
-        setMessageList(JSON.parse(session))
+        setMessageList(JSON.parse(session));
       } else
         setMessageList([
           {
             role: "assistant",
-            content: defaultMessage
-          }
-        ])
+            content: defaultMessage,
+          },
+        ]);
     } catch {
-      console.log("Setting parse error")
+      console.log("Setting parse error");
     }
-  })
+  });
 
   createEffect((prev: number | undefined) => {
     if (prev !== undefined && messageList().length > prev) {
-      scrollToBottom()
+      scrollToBottom();
     }
-    return messageList().length
-  })
+    return messageList().length;
+  });
 
   createEffect(() => {
-    if (currentAssistantMessage()) scrollToBottom()
-  })
+    if (currentAssistantMessage()) scrollToBottom();
+  });
 
-  createEffect(prev => {
-    messageList()
+  createEffect((prev) => {
+    messageList();
     if (prev) {
       if (messageList().length === 0) {
         setMessageList([
           {
             role: "assistant",
-            content: defaultMessage
-          }
-        ])
+            content: defaultMessage,
+          },
+        ]);
       } else if (
         messageList().length > 1 &&
         messageList()[0].content === defaultMessage
       ) {
-        setMessageList(messageList().slice(1))
+        setMessageList(messageList().slice(1));
       }
       if (setting().archiveSession) {
-        localStorage.setItem("session", JSON.stringify(messageList()))
+        localStorage.setItem("session", JSON.stringify(messageList()));
       }
     }
-    return true
-  })
+    return true;
+  });
 
   createEffect(() => {
-    localStorage.setItem("setting", JSON.stringify(setting()))
-  })
+    localStorage.setItem("setting", JSON.stringify(setting()));
+  });
 
-  createEffect(prev => {
-    inputContent()
+  createEffect((prev) => {
+    inputContent();
     if (prev) {
-      setHeight("48px")
+      setHeight("48px");
       if (inputContent() === "") {
-        setCompatiblePrompt([])
+        setCompatiblePrompt([]);
       } else {
-        const { scrollHeight } = inputRef
+        const { scrollHeight } = inputRef;
         setHeight(
           `${
             scrollHeight > window.innerHeight - 64
               ? window.innerHeight - 64
               : scrollHeight
           }px`
-        )
+        );
       }
-      inputRef.focus()
+      inputRef.focus();
     }
-    return true
-  })
+    return true;
+  });
 
   function archiveCurrentMessage() {
     if (currentAssistantMessage()) {
@@ -174,91 +177,90 @@ export default function (props: {
         ...messageList(),
         {
           role: "assistant",
-          content: currentAssistantMessage().trim()
-        }
-      ])
-      setCurrentAssistantMessage("")
-      setLoading(false)
-      setController()
-      !isMobile() && inputRef.focus()
+          content: currentAssistantMessage().trim(),
+        },
+      ]);
+      setCurrentAssistantMessage("");
+      setLoading(false);
+      setController();
+      !isMobile() && inputRef.focus();
     }
   }
 
   async function handleButtonClick(value?: string) {
-    const inputValue = value ?? inputContent()
+    const inputValue = value ?? inputContent();
     if (!inputValue) {
-      return
+      return;
     }
 
     // 发送弹幕
-    if(setting().bullet) {
-      SendAndSaveBullet(inputValue)
+    if (setting().bullet) {
+      SendAndSaveBullet(inputValue);
     }
-    setCurrentAssistantMessage("网站已不可用，请关注公众号【toolkit百宝箱】，获取最新地址")
-    return
+    // setCurrentAssistantMessage("网站已不可用，请关注公众号【toolkit百宝箱】，获取最新地址")
+    // return
 
     // @ts-ignore
-    if (window?.umami) umami.trackEvent("chat_generate")
-    setInputContent("")
+    if (window?.umami) umami.trackEvent("chat_generate");
+    setInputContent("");
     if (
       !value ||
       value !==
         messageList()
-          .filter(k => k.role === "user")
+          .filter((k) => k.role === "user")
           .at(-1)?.content
     ) {
       setMessageList([
         ...messageList(),
         {
           role: "user",
-          content: inputValue
-        }
-      ])
+          content: inputValue,
+        },
+      ]);
     }
     try {
-      await fetchGPT(inputValue)
+      await fetchGPT(inputValue);
     } catch (error) {
-      setLoading(false)
-      setController()
+      setLoading(false);
+      setController();
       setCurrentAssistantMessage(
         String(error).includes("The user aborted a request")
           ? ""
           : String(error)
-      )
+      );
     }
-    archiveCurrentMessage()
+    archiveCurrentMessage();
   }
 
   async function fetchGPT(inputValue: string) {
+    // 检查ip
+    let ip = getIp();
+    if (isValidIP(ip)) {
+      let date = getNowDate();
+      if (localStorage.getItem(date) == null) {
+        localStorage.setItem(date, "0");
+      } else {
+        localStorage.setItem(
+          date,
+          String(Number(localStorage.getItem(date)) + 1)
+        );
+      }
 
-     // 检查ip
-     let ip =  getIp()
-     if (isValidIP(ip)) {
-       let date = getNowDate();
-       if(localStorage.getItem(date) == null) {
-         localStorage.setItem(date,"0")
-       } else {
-         localStorage.setItem(date, String( Number(localStorage.getItem(date)) + 1))
-       }
- 
-       if( Number(localStorage.getItem(date)) > 10) {
-         throw new Error("今前已超额，请过一小时再试")
-       }
- 
-       
-     } else {
-       throw new Error("Not for cell phone")
-     }
+      if (Number(localStorage.getItem(date)) > 10) {
+        throw new Error("今前已超额，请过一小时再试");
+      }
+    } else {
+      throw new Error("Not for cell phone");
+    }
 
-
-    setLoading(true)
-    const controller = new AbortController()
-    setController(controller)
-    const systemRule = setting().systemRule.trim()
+    setLoading(true);
+    const controller = new AbortController();
+    setController(controller);
+    const systemRule = setting().systemRule.trim();
     const message = {
       role: "user",
-      content: systemRule ? systemRule + "\n" + inputValue : inputValue
-    }
+      content: systemRule ? systemRule + "\n" + inputValue : inputValue,
+    };
     const response = await fetch("/api", {
       method: "POST",
       body: JSON.stringify({
@@ -267,104 +269,104 @@ export default function (props: {
           : [message],
         key: setting().openaiAPIKey || undefined,
         temperature: setting().openaiAPITemperature / 100,
-        password: setting().password
+        password: setting().password,
       }),
-      signal: controller.signal
-    })
+      signal: controller.signal,
+    });
     if (!response.ok) {
-      throw new Error(response.statusText)
+      throw new Error(response.statusText);
     }
-    const data = response.body
+    const data = response.body;
     if (!data) {
-      throw new Error("没有返回数据")
+      throw new Error("没有返回数据");
     }
-    const reader = data.getReader()
-    const decoder = new TextDecoder("utf-8")
-    let done = false
+    const reader = data.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let done = false;
 
     while (!done) {
-      const { value, done: readerDone } = await reader.read()
+      const { value, done: readerDone } = await reader.read();
       if (value) {
-        let char = decoder.decode(value)
+        let char = decoder.decode(value);
         if (char === "\n" && currentAssistantMessage().endsWith("\n")) {
-          continue
+          continue;
         }
         if (char) {
-          setCurrentAssistantMessage(currentAssistantMessage() + char)
+          setCurrentAssistantMessage(currentAssistantMessage() + char);
         }
       }
-      done = readerDone
+      done = readerDone;
     }
   }
 
   function clearSession() {
-    setMessageList([])
-    setCurrentAssistantMessage("")
+    setMessageList([]);
+    setCurrentAssistantMessage("");
   }
 
   function stopStreamFetch() {
     if (controller()) {
-      controller()?.abort()
-      archiveCurrentMessage()
+      controller()?.abort();
+      archiveCurrentMessage();
     }
   }
 
   function reAnswer() {
     handleButtonClick(
       messageList()
-        .filter(k => k.role === "user")
+        .filter((k) => k.role === "user")
         .at(-1)?.content
-    )
+    );
   }
 
   function selectPrompt(prompt: string) {
-    setInputContent(prompt)
-    setCompatiblePrompt([])
-    const { scrollHeight } = inputRef
+    setInputContent(prompt);
+    setCompatiblePrompt([]);
+    const { scrollHeight } = inputRef;
     setHeight(
       `${
         scrollHeight > window.innerHeight - 64
           ? window.innerHeight - 64
           : scrollHeight
       }px`
-    )
-    inputRef.focus()
+    );
+    inputRef.focus();
   }
 
   const find = throttle(
     (value: string) => {
       if (value === "/" || value === " ")
-        return setCompatiblePrompt(props.prompts.slice(0, 20))
-      const query = value.replace(/^[\/ ](.*)/, "$1")
+        return setCompatiblePrompt(props.prompts.slice(0, 20));
+      const query = value.replace(/^[\/ ](.*)/, "$1");
       if (query !== value)
         setCompatiblePrompt(
           fzf
             .find(query)
-            .map(k => k.item)
+            .map((k) => k.item)
             .slice(0, 20)
-        )
+        );
     },
     250,
     {
       trailing: false,
-      leading: true
+      leading: true,
     }
-  )
+  );
 
   async function handleInput() {
-    setHeight("48px")
-    const { scrollHeight } = inputRef
+    setHeight("48px");
+    const { scrollHeight } = inputRef;
     setHeight(
       `${
         scrollHeight > window.innerHeight - 64
           ? window.innerHeight - 64
           : scrollHeight
       }px`
-    )
-    if (!compositionend()) return
-    let { value } = inputRef
-    setInputContent(value)
-    find(value)
+    );
+    if (!compositionend()) return;
+    let { value } = inputRef;
+    setInputContent(value);
+    find(value);
   }
 
   return (
@@ -372,7 +374,7 @@ export default function (props: {
       <div
         id="message-container"
         style={{
-          "background-color": "var(--c-bg)"
+          "background-color": "var(--c-bg)",
         }}
       >
         <For each={messageList()}>
@@ -399,7 +401,7 @@ export default function (props: {
                 transition: "opacity 1s ease-in-out",
                 width: containerWidth(),
                 opacity: 100,
-                "background-color": "var(--c-bg)"
+                "background-color": "var(--c-bg)",
               }
         }
       >
@@ -441,29 +443,29 @@ export default function (props: {
               value={inputContent()}
               autofocus
               onClick={scrollToBottom}
-              onKeyDown={e => {
-                if (e.isComposing) return
+              onKeyDown={(e) => {
+                if (e.isComposing) return;
                 if (compatiblePrompt().length) {
                   if (
                     e.key === "ArrowUp" ||
                     e.key === "ArrowDown" ||
                     e.key === "Enter"
                   ) {
-                    e.preventDefault()
+                    e.preventDefault();
                   }
                 } else if (e.key === "Enter") {
                   if (!e.shiftKey) {
-                    e.preventDefault()
-                    handleButtonClick()
+                    e.preventDefault();
+                    handleButtonClick();
                   }
                 } else if (e.key === "ArrowUp") {
                   const userMessages = messageList()
-                    .filter(k => k.role === "user")
-                    .map(k => k.content)
-                  const content = userMessages.at(-1)
+                    .filter((k) => k.role === "user")
+                    .map((k) => k.content);
+                  const content = userMessages.at(-1);
                   if (content && !inputContent()) {
-                    e.preventDefault()
-                    setInputContent(content)
+                    e.preventDefault();
+                    setInputContent(content);
                   }
                 }
               }}
@@ -473,7 +475,7 @@ export default function (props: {
                 "border-bottom-right-radius": 0,
                 "border-top-right-radius": height() === "48px" ? 0 : "0.25rem",
                 "border-top-left-radius":
-                  compatiblePrompt().length === 0 ? "0.25rem" : 0
+                  compatiblePrompt().length === 0 ? "0.25rem" : 0,
               }}
               class="self-end py-3 resize-none w-full px-3 text-slate-7 dark:text-slate bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none placeholder:text-slate-400 placeholder:text-slate-400 placeholder:op-40"
               rounded-l
@@ -482,8 +484,8 @@ export default function (props: {
               <button
                 class="i-carbon:add-filled absolute right-3.5em bottom-3em rotate-45 text-op-20! hover:text-op-80! text-slate-7 dark:text-slate"
                 onClick={() => {
-                  setInputContent("")
-                  inputRef.focus()
+                  setInputContent("");
+                  inputRef.focus();
                 }}
               />
             </Show>
@@ -491,7 +493,7 @@ export default function (props: {
               class="flex text-slate-7 dark:text-slate bg-slate bg-op-15 text-op-80! hover:text-op-100! h-3em items-center rounded-r"
               style={{
                 "border-top-right-radius":
-                  compatiblePrompt().length === 0 ? "0.25rem" : 0
+                  compatiblePrompt().length === 0 ? "0.25rem" : 0,
               }}
             >
               <button
@@ -504,57 +506,58 @@ export default function (props: {
         </Show>
       </div>
     </div>
-  )
+  );
 }
-
 
 // 获取ip
 function getIp(): string {
-
   let ip = localStorage.getItem("ip") == null ? "" : localStorage.getItem("ip");
-  if (ip != null && ip != 'null' && ip != "") {
+  if (ip != null && ip != "null" && ip != "") {
     return ip;
   }
 
-  fetch('https://api.ipify.org/?format=json',{
-      method: 'GET'
+  fetch("https://api.ipify.org/?format=json", {
+    method: "GET",
   })
-.then(response => {
-   // 检查响应状态码
-   if (response.ok) {
-      // 返回响应结果的 JSON 格式
-      return response.json();
-    } else {
-      console.log("https://api.ipify.org/?format=json Network response was not ok.");
-    }
-}).then(data => {
-  ip = data.ip;
-  localStorage.setItem("ip", ip == null ? "" : ip)
-})
+    .then((response) => {
+      // 检查响应状态码
+      if (response.ok) {
+        // 返回响应结果的 JSON 格式
+        return response.json();
+      } else {
+        console.log(
+          "https://api.ipify.org/?format=json Network response was not ok."
+        );
+      }
+    })
+    .then((data) => {
+      ip = data.ip;
+      localStorage.setItem("ip", ip == null ? "" : ip);
+    });
 
-  return ip == null ? "" : ip
-
+  return ip == null ? "" : ip;
 }
 
-function isValidIP(ip:any) {
-  var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+function isValidIP(ip: any) {
+  var reg =
+    /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
   return reg.test(ip);
-} 
-
+}
 
 function getNowDate(): string {
   const date = new Date();
   let month: string | number = date.getMonth() + 1;
   let strDate: string | number = date.getDate();
- 
+
   if (month <= 9) {
     month = "0" + month;
   }
- 
+
   if (strDate <= 9) {
     strDate = "0" + strDate;
   }
- 
-  return date.getFullYear() + "-" + month + "-" + strDate + " "
-  + date.getHours();
+
+  return (
+    date.getFullYear() + "-" + month + "-" + strDate + " " + date.getHours()
+  );
 }
