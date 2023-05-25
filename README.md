@@ -1,6 +1,7 @@
 
 ## 介绍
 一个支持发送弹幕的chatgpt
+网址：https://gpt.toolkit.show
 
 ## 截图
 ![20230525110346](https://img.ggball.top/picGo/20230525110346.png)
