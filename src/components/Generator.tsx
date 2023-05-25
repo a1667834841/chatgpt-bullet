@@ -54,7 +54,7 @@ export default function (props: {
   const scrollToBottom = throttle(
     () => {
       window.scrollTo({
-        top: document.body.scrollHeight,
+        top: document.body.scrollHeight - 100,
         behavior: "smooth",
       });
     },
@@ -83,7 +83,9 @@ export default function (props: {
     document.querySelector("main")?.classList.remove("before");
     document.querySelector("main")?.classList.add("after");
     createResizeObserver(containerRef, ({ width, height }, el) => {
-      if (el === containerRef) setContainerWidth(`${width}px`);
+      if (el === containerRef) {
+        setContainerWidth(`${width}px`);
+      }
     });
     const storage = localStorage.getItem("setting");
     const session = localStorage.getItem("session");
@@ -246,8 +248,8 @@ export default function (props: {
         );
       }
 
-      if (Number(localStorage.getItem(date)) > 10) {
-        throw new Error("今前已超额，请过一小时再试");
+      if (Number(localStorage.getItem(date)) > 3) {
+        throw new Error("当前已超额，请过一小时再试");
       }
     } else {
       throw new Error("Not for cell phone");
@@ -391,6 +393,8 @@ export default function (props: {
         {currentAssistantMessage() && (
           <MessageItem role="assistant" message={currentAssistantMessage()} />
         )}
+        <MessageItem role="system" message={" \n\n"} />
+        <MessageItem role="system" message={" \n\n"} />
       </div>
       <div
         class="pb-2em fixed bottom-0 z-10 op-0"
